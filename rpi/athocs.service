@@ -1,14 +1,14 @@
 [Unit]
 Description=athocs sensor data logger
- 
+
 [Service]
 User=alex
-Group=root
+Group=i2c
 WorkingDirectory=/home/alex/athocs-sensor
 ExecStart=/usr/bin/python3 /home/alex/athocs-sensor/rpi/athocs-sensor-logger.py
 Restart=always
 Environment=PYTHONUNBUFFERED=1
- 
+
 [Install]
 WantedBy=multi-user.target
- 
+
