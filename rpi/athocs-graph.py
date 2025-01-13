@@ -7,7 +7,7 @@ INPUT_FILE = "/home/alex/web/athocs.1.log.csv"
 OUTPUT_FILE = "/home/alex/web/graph-last-24-hours.png"
 
 # Load the CSV file
-data = pd.read_csv("data.csv")
+data = pd.read_csv(INPUT_FILE)
 
 # Ensure the datetime column is in datetime format
 data["datetime"] = pd.to_datetime(data["datetime"])
@@ -52,5 +52,5 @@ plt.title("Temperature, Humidity, and Pressure in the Last 24 Hours")
 fig.tight_layout()
 
 # Save the plot as an image
-plt.savefig()
+plt.savefig(OUTPUT_FILE)
 
