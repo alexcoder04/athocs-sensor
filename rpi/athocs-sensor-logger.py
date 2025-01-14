@@ -14,6 +14,6 @@ params = bme280.load_calibration_params(bus, address)
 while True:
     data = bme280.sample(bus, address, params)
     with open(LOG_FILE, "a") as f:
-        f.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')},{data.temperature:.2f},{data.humidity:.1f},{data.pressure:.0f}\n")
+        f.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')},{data.temperature:.2f},{data.humidity:.1f},{data.pressure:.1f}\n")
     time.sleep(INTERVAL)
 
