@@ -1,0 +1,4 @@
+
+# athocs sensor
+*/5 * * * * /usr/bin/python3 /home/alex/athocs/athocs-sensor/rpi/athocs-sensor.py >/home/alex/athocs/log/sensor-errors.log 2>&1
+
