@@ -5,7 +5,7 @@ Description=athocs sensor data logger
 User=alex
 Group=i2c
 WorkingDirectory=/home/alex/athocs-sensor
-ExecStart=/usr/bin/python3 /home/alex/athocs-sensor/rpi/athocs-sensor-logger.py
+ExecStart=/usr/bin/python3 /home/alex/athocs-sensor/rpi/athocs-sensor.py
 Restart=always
 Environment=PYTHONUNBUFFERED=1
 
