@@ -3,41 +3,39 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
 
-INPUT_FILE = "/home/alex/web/athocs.1.log.csv"
+current_timestamp = datetime.now()
+timestamp_24_hours_ago = current_timestamp - timedelta(hours=24)
+
+IP = "192.168.0.86"
+PORT = 3000
+INPUT_URL = f"http://{IP}:{PORT}/api/data?station=RPIZ-ALEX&time_from={timestamp_24_hours_ago.strftime('%Y-%m-%d_%H:%M:%S')}&time_to={current_timestamp.strftime('%Y-%m-%d_%H:%M:%S')}"
 OUTPUT_FILE = "/home/alex/web/graph-last-24-hours.png"
 
 # Load the CSV file
-data = pd.read_csv(INPUT_FILE)
+data = pd.read_csv(INPUT_URL)
 
-# Ensure the datetime column is in datetime format
-data["datetime"] = pd.to_datetime(data["datetime"])
-
-# Get the current time and calculate the time 24 hours ago
-now = datetime.now()
-twenty_four_hours_ago = now - timedelta(hours=24)
-
-# Filter the data for the last 24 hours
-last_24_hours_data = data[data["datetime"] >= twenty_four_hours_ago]
+# Ensure the timestamp column is in timestamp format
+data["timestamp"] = pd.to_datetime(data["timestamp"], format='%Y-%m-%d_%H:%M:%S')
 
 # Create a figure and axis for the plot
 fig, ax1 = plt.subplots(figsize=(12, 6))
 
 # Plot temperature on the first y-axis
-ax1.plot(last_24_hours_data["datetime"], last_24_hours_data["temperature"], label="Temperature (°C)", color="red")
-ax1.set_xlabel("Datetime")
+ax1.plot(data["timestamp"], data["temperature"], label="Temperature (°C)", color="red")
+ax1.set_xlabel("timestamp")
 ax1.set_ylabel("Temperature (°C)", color="red")
 ax1.tick_params(axis="y", labelcolor="red")
 
 # Create a second y-axis for humidity
 ax2 = ax1.twinx()
-ax2.plot(last_24_hours_data["datetime"], last_24_hours_data["humidity"], label="Humidity (%)", color="blue")
+ax2.plot(data["timestamp"], data["humidity"], label="Humidity (%)", color="blue")
 ax2.set_ylabel("Humidity (%)", color="blue")
 ax2.tick_params(axis="y", labelcolor="blue")
 
 # Create a third y-axis for pressure
 ax3 = ax1.twinx()
 ax3.spines["right"].set_position(("outward", 60))  # Offset the third axis
-ax3.plot(last_24_hours_data["datetime"], last_24_hours_data["pressure"], label="Pressure (hPa)", color="green", alpha=0.25)
+ax3.plot(data["timestamp"], data["pressure"], label="Pressure (hPa)", color="green", alpha=0.25)
 ax3.set_ylabel("Pressure (hPa)", color="green")
 ax3.tick_params(axis="y", labelcolor="green")
 
