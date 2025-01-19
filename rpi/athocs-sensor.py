@@ -1,11 +1,12 @@
-import smbus2
 import bme280
 import datetime
+import os
 import requests
+import smbus2
 
-IP = "192.168.0.86"
-PORT = 3000
-STATION_ID = "RPIZ-ALEX"
+IP = os.getenv("ATHOCS_IP")
+PORT = os.getenv("ATHOCS_PORT")
+STATION_ID = os.getenv("ATHOCS_STATION_ID")
 
 address = 0x76
 bus = smbus2.SMBus(1)

@@ -1,0 +1,4 @@
+
+# athocs graph
+*/5 * * * * . ~/.profile && /usr/bin/python3 "$ATHOCS_BASE_DIR/athocs-sensor/rpi/athocs-graph.py" >"$ATHOCS_BASE_DIR/log/graph.log" 2>&1
+

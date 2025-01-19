@@ -1,15 +1,16 @@
-import pandas as pd
-import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+import pandas as pd
+import os
 
 current_timestamp = datetime.now()
 timestamp_24_hours_ago = current_timestamp - timedelta(hours=24)
 
-IP = "192.168.0.86"
-PORT = 3000
+IP = os.getenv("ATHOCS_IP")
+PORT = os.getenv("ATHOCS_PORT")
 INPUT_URL = f"http://{IP}:{PORT}/api/data?station=RPIZ-ALEX&time_from={timestamp_24_hours_ago.strftime('%Y-%m-%d_%H:%M:%S')}&time_to={current_timestamp.strftime('%Y-%m-%d_%H:%M:%S')}"
-OUTPUT_FILE = "/home/alex/web/graph-last-24-hours.png"
+OUTPUT_FILE = f"{os.getenv('ATHOCS_BASE_DIR')}/graphs/graph-last-24-hours.png"
 
 # Load the CSV file
 data = pd.read_csv(INPUT_URL)
