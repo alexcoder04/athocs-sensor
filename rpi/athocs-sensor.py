@@ -26,5 +26,5 @@ try:
         "battery": 100
         })
 except Exception:
-    print(f"{timestamp},{STATION_ID},{temperature:.2f},{humidity:.2f},{pressure:.1f},100")
+    print(f"{timestamp},{STATION_ID},{data.temperature:.2f},{data.humidity:.2f},{data.pressure:.1f},100")
 

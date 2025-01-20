@@ -43,8 +43,7 @@ ax3.tick_params(axis="y", labelcolor="green")
 # Format the x-axis to show month-date hour:minute and display every hour
 ax1.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d %H:%M"))
 ax1.xaxis.set_major_locator(mdates.HourLocator(interval=1))
-ax1.tick_params("x", rotation=45)
-#plt.xticks(rotation=90)
+ax1.tick_params("x", rotation=90)
 
 # Add a title and adjust layout
 plt.title("Temperature, Humidity, and Pressure in the Last 24 Hours")
