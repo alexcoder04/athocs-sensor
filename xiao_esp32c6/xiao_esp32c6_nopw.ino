@@ -3,11 +3,17 @@
 #include <Bme280.h>
 #include <ArduinoJson.h>
 
+#define DEBUG 0
 #define STATION_ID "E6X0-ALEX"
 #define SENSOR_PORT_A D4 // "SDA"
 #define SENSOR_PORT_B D5 // "SCL"
 #define BATTERY_PORT A0 // battery voltage monitoring
-#define RESET_PIN D2 // set this pin to HIGH to enable serial interface
+#define UNLOCK_PIN D2 // set this pin to HIGH to enable serial interface
+#if DEBUG
+  #define DATA_UPLOAD_INTERVAL (30)
+#else
+  #define DATA_UPLOAD_INTERVAL (5 * 60)
+#endif
 
 const char* uploadUrl = "http://192.168.0.86:1111/api/upload";
 const char* ssid = "CREDENTIALS";
@@ -34,7 +40,10 @@ void initWifi() {
     // TODO go to sleep if low on battery
     delay(1000);
   }
+#if DEBUG
+  Serial.print("Connected to Wifi as ");
   Serial.println(WiFi.localIP());
+#endif
 }
 
 void initSensor() {
@@ -67,6 +76,11 @@ MeasurementData* readMeasurement() {
 void uploadData(MeasurementData *data) {
     if (WiFi.status() == WL_CONNECTED) {
       HTTPClient http;
+      http.setReuse(false);
+
+#if DEBUG
+      Serial.printf("Requesting url '%s'\n", uploadUrl);
+#endif
 
       http.begin(uploadUrl);
       http.addHeader("Content-Type", "application/json");
@@ -84,8 +98,15 @@ void uploadData(MeasurementData *data) {
 
       int httpResponseCode = http.POST(jsonString);
       if (httpResponseCode > 0) {
-          String response = http.getString();
+#if DEBUG
+        Serial.println("Uploaded data successfully.");
+#endif
       } else {
+#if DEBUG
+        Serial.println("Data upload failed");
+        Serial.println(httpResponseCode);
+        Serial.println(http.errorToString(httpResponseCode));
+#endif
           // TODO save data on device and try to upload later
       }
 
@@ -95,21 +116,49 @@ void uploadData(MeasurementData *data) {
     }
 }
 
+void mainRoutine() {
+  MeasurementData *data = readMeasurement();
+#if DEBUG
+  Serial.printf("t=%f, h=%f, p=%f, b=%d\n", data->temperature, data->humidity, data->pressure, data->battery);
+#endif
+  uploadData(data);
+  delete data;
+}
+
 void setup() {
+#if DEBUG
+  Serial.begin(115200);
+#endif
+
   initBattery();
   initWifi();
   initSensor();
 
-  MeasurementData *data = readMeasurement();
-  uploadData(data);
-  delete data;
+#if DEBUG
+  Serial.println("Setup finished");
+  Serial.println("Reading data...");
+#endif
 
-  pinMode(RESET_PIN, INPUT);
-  if (digitalRead(RESET_PIN) != HIGH) {
-    esp_sleep_enable_timer_wakeup(5 * 60 * 1000 * 1000); // this is in MICROseconds
+  mainRoutine();
+
+#if DEBUG
+  Serial.println("Debug enabled, not going into deep sleep");
+  delay(DATA_UPLOAD_INTERVAL * 1000);
+#else
+  pinMode(UNLOCK_PIN, INPUT);
+  if (digitalRead(UNLOCK_PIN) != HIGH) {
+    // default mode: we go into deep sleep and restart
+    esp_sleep_enable_timer_wakeup(DATA_UPLOAD_INTERVAL * 1000 * 1000); // this is in MICROseconds
     esp_deep_sleep_start();
+  } else {
+    // debug mode: only a delay, so we stay accessible
+    // activated until next full power cycle
+    delay(DATA_UPLOAD_INTERVAL * 1000);
   }
+#endif
 }
 
-void loop() {} // unused because of deep sleep
-
+void loop() {
+  mainRoutine();
+  delay(DATA_UPLOAD_INTERVAL * 1000);
+}
