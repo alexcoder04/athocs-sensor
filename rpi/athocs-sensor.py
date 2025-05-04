@@ -18,7 +18,7 @@ params = bme280.load_calibration_params(bus, address)
 ina219 = INA219(addr=0x43)
 
 data = bme280.sample(bus, address, params)
-battery = (ina219.getBusVoltage_V() - 3.3)/0.9*100
+battery = int((ina219.getBusVoltage_V() - 3.3)/0.9*100)
 timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 
 try:

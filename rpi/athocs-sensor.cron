@@ -1,4 +1,4 @@
 
 # athocs sensor
-*/5 * * * * . ~/.profile && /usr/bin/python3 "$ATHOCS_BASE_DIR/athocs-sensor/rpi/athocs-sensor.py" >"$ATHOCS_BASE_DIR/log/sensor-errors.log" 2>&1
+*/5 * * * * . ~/.profile && cd "$ATHOCS_BASE_DIR/athocs-sensor/rpi" && /usr/bin/python3 "athocs-sensor.py" >"$ATHOCS_BASE_DIR/log/sensor-errors.log" 2>&1
 
